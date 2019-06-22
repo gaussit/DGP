@@ -44,14 +44,21 @@ def induce_parents(s, stop_set):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input', default='imagenet-split.json')
-    parser.add_argument('--output', default='imagenet-induced-graph.json')
+    # Is it really necessary/ good to limit the knowledge graph input if we
+    # want to train on smaller sized imagenette?
+    #parser.add_argument('--input', default='imagenet-split.json')
+    parser.add_argument('--input', default='imagenette-split.json')
+    #parser.add_argument('--output', default='imagenet-induced-graph.json')
+    parser.add_argument('--output', default='imagenette-induced-graph.json')
     args = parser.parse_args()
 
     print('making graph ...')
 
+    # stores the WordNet IDs of the whole ImageNet in a variable
     xml_wnids = json.load(open('imagenet-xml-wnids.json', 'r'))
+    # gets the corresponding name of the WordNet IDs
     xml_nodes = list(map(getnode, xml_wnids))
+    # only the set, since multiple training images per class
     xml_set = set(xml_nodes)
 
     js = json.load(open(args.input, 'r'))
@@ -73,6 +80,7 @@ if __name__ == '__main__':
 
     print('making glove embedding ...')
 
+    # gets the GloVe 300d vector for the specified words from the input file
     glove = GloVe('glove.6B.300d.txt')
     vectors = []
     for wnid in wnids:
@@ -86,4 +94,3 @@ if __name__ == '__main__':
     obj['vectors'] = vectors.tolist()
     obj['edges'] = edges
     json.dump(obj, open(args.output, 'w'))
-

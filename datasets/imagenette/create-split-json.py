@@ -62,4 +62,5 @@ def create_json():
         json.dump(to_json, fp)
 
 
-create_json()
+if __name__ == '__main__':
+    create_json()
